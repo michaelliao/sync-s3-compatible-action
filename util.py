@@ -3,13 +3,13 @@
 import os, base64, hashlib, shutil, mimetypes
 from functools import reduce
 
-SYNC_DIR = "sync_dir"
-SYNC_TYPE = "sync_type"
-SYNC_BUCKET = "sync_bucket"
-SYNC_REGION = "sync_region"
-SYNC_ACCESS_ID = "sync_access_id"
-SYNC_ACCESS_SECRET = "sync_access_secret"
-SYNC_OPT_UNUSED = "sync_opt_unused"
+SYNC_DIR = "SYNC_DIR"
+SYNC_TYPE = "SYNC_TYPE"
+SYNC_BUCKET = "SYNC_BUCKET"
+SYNC_REGION = "SYNC_REGION"
+SYNC_ACCESS_ID = "SYNC_ACCESS_ID"
+SYNC_ACCESS_SECRET = "SYNC_ACCESS_SECRET"
+SYNC_OPT_UNUSED = "SYNC_OPT_UNUSED"
 
 
 mimetypes.add_type("text/javascript", ".js")
