@@ -9,6 +9,7 @@ SYNC_BUCKET = "sync_bucket"
 SYNC_REGION = "sync_region"
 SYNC_ACCESS_ID = "sync_access_id"
 SYNC_ACCESS_SECRET = "sync_access_secret"
+SYNC_OPT_UNUSED = "sync_opt_unused"
 
 
 mimetypes.add_type("text/javascript", ".js")

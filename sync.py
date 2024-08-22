@@ -31,6 +31,10 @@ def main():
         print(f"GitHub workspace: {gh_workspace}")
         print(f"Sync dir: {sync_dir}")
 
+    # opt for unused files:
+    opt_unused = os.environ.get(util.SYNC_OPT_UNUSED, "keep")
+    print(f"sync strategy for unused files: {opt_unused}")
+
     ctx = {}
     env = os.environ
     s3 = __import__(sync_type, [])
@@ -47,8 +51,11 @@ def main():
         print(f"override exist file: {obj['key']}, size: {obj['size']}, md5: {obj['md5']}")
         s3.upload(ctx, env, obj["key"], os.path.join(sync_dir, obj["key"]), obj["md5"])
     for obj in delete_objs:
-        print(f"remove unused file: {obj['key']}, size: {obj['size']}, md5: {obj['md5']}")
-        s3.delete(ctx, env, obj["key"])
+        if opt_unused == "delete":
+            print(f"remove unused file: {obj['key']}, size: {obj['size']}, md5: {obj['md5']}")
+            s3.delete(ctx, env, obj["key"])
+        else:
+            print(f"keep unused file: {obj['key']}, size: {obj['size']}, md5: {obj['md5']}")
     print(f"synced ok: added {len(add_objs)} files, updated {len(update_objs)} files, deleted {len(delete_objs)} files.")
 
 
