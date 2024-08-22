@@ -24,6 +24,13 @@ def main():
         if not os.environ.get(env_key, ""):
             print(f"ERROR: env not set: {env_key}")
             exit(1)
+    # check if running in github action:
+    gh_workspace = os.environ.get("GITHUB_WORKSPACE", "")
+    if gh_workspace:
+        sync_dir = os.path.join(gh_workspace, sync_dir)
+        print(f"GitHub workspace: {gh_workspace}")
+        print(f"Sync dir: {sync_dir}")
+
     ctx = {}
     env = os.environ
     s3 = __import__(sync_type, [])
