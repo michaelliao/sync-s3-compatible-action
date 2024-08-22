@@ -62,7 +62,7 @@ jobs:
         env:
           JEKYLL_ENV: production
       - name: Sync to Cloud Storage
-        uses: michaelliao/sync-s3-compatible-action@v1
+        uses: michaelliao/sync-s3-compatible-action@v2
         env:
           SYNC_OPT_UNUSED: delete # force delete unused files on cloud storage:
           SYNC_DIR: _site # '_site' is default value
