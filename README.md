@@ -10,7 +10,7 @@ The `sync-s3-compatible-action` is a GitHub action which can sync a directory to
 
 ## Environment Variables
 
-The `sync-s3-compatible-action` takes the following environment variables:
+The `sync-s3-compatible-action` takes the following environment variables as inputs:
 
 | Name               | Default Value | Required | Description                   |
 |--------------------|---------------|----------|-------------------------------|
@@ -61,12 +61,13 @@ jobs:
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
-      - name: Sync To Cloud Storage
+      - name: Sync to Cloud Storage
         uses: michaelliao/sync-s3-compatible-action@v1
         env:
-          SYNC_OPT_UNUSED: delete
-          SYNC_DIR: _site
+          SYNC_OPT_UNUSED: delete # force delete unused files on cloud storage:
+          SYNC_DIR: _site # '_site' is default value
           SYNC_TYPE: aws
+          # bucket must be created in region:
           SYNC_REGION: us-west-1
           SYNC_BUCKET: gh-s3-sync-action-example
           # set at: Settings - Secrets and variables - Actions - Repository secrets:
@@ -78,7 +79,7 @@ jobs:
 
 ### AWS
 
-AWS S3 regions can be found on [this page](https://docs.aws.amazon.com/general/latest/gr/s3.html):
+AWS regions can be found on [this page](https://docs.aws.amazon.com/general/latest/gr/s3.html):
 
 ![AWS](aws.png)
 
