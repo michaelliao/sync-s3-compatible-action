@@ -7,24 +7,3 @@ runs:
 branding:
   icon: refresh-cw
   color: green
-inputs:
-  sync_dir:
-    required: false
-    description: "Local dir to sync."
-    default: '_site'
-  sync_type:
-    required: false
-    description: "Sync to which cloud storage. Supported values: 'aws', 'cloudflare', 'aliyun', 'qcloud', 'baidu'."
-    default: 'aws'
-  sync_bucket:
-    required: true
-    description: "Sync to your bucket name."
-  sync_region:
-    required: true
-    description: "Region in which the bucket was created."
-  sync_access_id:
-    required: true
-    description: "Access id for cloud storage with read/write permissions."
-  sync_access_secret:
-    required: true
-    description: "Access secret for cloud storage with read/write permissions."
