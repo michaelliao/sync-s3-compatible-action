@@ -1,18 +1,29 @@
 #!/usr/bin/env python3
 
-import os, json, base64, hashlib, shutil, zipfile, subprocess
+import os
 
 import util
 
 
 def main():
-    # load env:
-    from dotenv import load_dotenv
+    # load env for test:
+    env_file = ".env"
+    if os.path.exists(env_file):
+        from dotenv import load_dotenv
 
-    load_dotenv(f".aws.env")
+        load_dotenv(env_file)
     sync_dir = os.environ.get(util.SYNC_DIR, "_site")
-    sync_type = os.environ[util.SYNC_TYPE]
-    print(f"sync {sync_dir} to {sync_type}...")
+    sync_type = os.environ.get(util.SYNC_TYPE, "aws")
+    sync_region = os.environ.get(util.SYNC_REGION, "")
+    if not sync_region:
+        print(f"ERROR: env not set: {util.SYNC_REGION}")
+        exit(1)
+    print(f"sync dir '{sync_dir}' to {sync_type}/{sync_region}...")
+    # check env:
+    for env_key in (util.SYNC_ACCESS_ID, util.SYNC_ACCESS_SECRET):
+        if not os.environ.get(env_key, ""):
+            print(f"ERROR: env not set: {env_key}")
+            exit(1)
     ctx = {}
     env = os.environ
     s3 = __import__(sync_type, [])
