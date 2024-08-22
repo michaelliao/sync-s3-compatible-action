@@ -16,8 +16,8 @@ def init(ctx, env):
     # get access keys from env:
     accessId = env[util.SYNC_ACCESS_ID]
     accessSecret = env[util.SYNC_ACCESS_SECRET]
-    # build client:
-    client = boto3.client("s3", aws_access_key_id=accessId, aws_secret_access_key=accessSecret, endpoint_url=f"https://{region}")
+    # note: set region name to 'auto' for R2, and endpoint to {region}.r2.cloudflarestorage.com:
+    client = boto3.client("s3", region_name="auto", aws_access_key_id=accessId, aws_secret_access_key=accessSecret, endpoint_url=f"https://{region}")
     # put client into ctx for later use:
     ctx["client"] = client
 

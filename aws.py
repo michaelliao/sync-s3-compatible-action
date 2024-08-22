@@ -12,11 +12,13 @@ def init(ctx, env):
     ctx: dict that can hold any thing during sync.
     env: dict contains all system env key-values.
     """
+    # get region from env:
+    region = env[util.SYNC_REGION]
     # get access keys from env:
     accessId = env[util.SYNC_ACCESS_ID]
     accessSecret = env[util.SYNC_ACCESS_SECRET]
     # build client:
-    client = boto3.client("s3", aws_access_key_id=accessId, aws_secret_access_key=accessSecret)
+    client = boto3.client("s3", region_name=region, aws_access_key_id=accessId, aws_secret_access_key=accessSecret)
     # put client into ctx for later use:
     ctx["client"] = client
 
