@@ -8,6 +8,8 @@ from oss2.credentials import EnvironmentVariableCredentialsProvider
 
 def init(ctx, env):
     region = env[util.SYNC_REGION]
+    if not region.startswith("oss-"):
+        region = "oss-" + region
     if not region.endswith(".aliyuncs.com"):
         region = region + ".aliyuncs.com"
     bucket = env[util.SYNC_BUCKET]
