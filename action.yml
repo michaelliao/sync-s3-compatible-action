@@ -1,5 +1,5 @@
 name: "S3-compatible Sync Action"
-description: "Sync a directory to an S3-compatible storage"
+description: "Sync a directory to an S3-compatible (R2, OSS, COS, BOS) storage"
 author: michaelliao
 runs:
   using: docker
