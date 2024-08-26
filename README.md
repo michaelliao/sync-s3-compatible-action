@@ -8,6 +8,8 @@ The `sync-s3-compatible-action` is a GitHub action which can sync a directory to
 - QCloud COS
 - Baidu Cloud BOS
 
+This action only updates the changed files by comparing local directory and cloud storage.
+
 ## Environment Variables
 
 The `sync-s3-compatible-action` takes the following environment variables as inputs:
@@ -18,14 +20,14 @@ The `sync-s3-compatible-action` takes the following environment variables as inp
 | SYNC_TYPE          | `aws`         | No       | Cloud storage provider        |
 | SYNC_BUCKET        |               | Yes      | Bucket name.                  |
 | SYNC_REGION        |               | Yes      | Region name.                  |
-| SYNC_ACCESS_ID     |               | Yes      | Access id for API access.     |
-| SYNC_ACCESS_SECRET |               | Yes      | Aceess secret for API access. |
+| SYNC_ACCESS_ID     |               | Yes      | API access id.                |
+| SYNC_ACCESS_SECRET |               | Yes      | API aceess secret.            |
 | SYNC_OPT_UNUSED    | `keep`        | No       | How to process files exist on cloud storage but not exist in local. |
 
 ## Notes
 
-- `SYNC_ACCESS_SECRET` and `SYNC_ACCESS_SECRET` are confidential and should NOT be public. Add these values as [encrypted secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) and pass the secrets as inputs.
-- Files which exist on cloud storage but not exist in local directory will be keeped by default. To remove unused files you must set `SYNC_OPT_UNUSED` to `delete` explicitly.
+- `SYNC_ACCESS_ID` and `SYNC_ACCESS_SECRET` are confidential and should NOT be written in GitHub action yaml. Add these values as [encrypted secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) and pass the secrets as inputs.
+- Files which exist on cloud storage but not exist in local directory will be **keeped** by default. To remove unused files you must set `SYNC_OPT_UNUSED` to `delete` explicitly.
 - Default value of `SYNC_DIR` is `_site`, which is useful to sync generated GitHub page to cloud storage.
 
 ## Example
@@ -64,10 +66,12 @@ jobs:
       - name: Sync to Cloud Storage
         uses: michaelliao/sync-s3-compatible-action@v2
         env:
-          SYNC_OPT_UNUSED: delete # force delete unused files on cloud storage:
-          SYNC_DIR: _site # '_site' is default value
+          # force delete unused files on cloud storage:
+          SYNC_OPT_UNUSED: delete
+          # "_site" is default value
+          SYNC_DIR: _site
           SYNC_TYPE: aws
-          # bucket must be created in region:
+          # bucket must be exist in region:
           SYNC_REGION: us-west-1
           SYNC_BUCKET: gh-s3-sync-action-example
           # set at: Settings - Secrets and variables - Actions - Repository secrets:
