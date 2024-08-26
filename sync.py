@@ -44,6 +44,11 @@ def main():
     dest_objs = s3.list_all(ctx, env)
     print(f"loaded {len(dest_objs)} remote files.")
     add_objs, update_objs, delete_objs = util.diff(src_objs, dest_objs)
+
+    force_delete = opt_unused == "delete"
+    keep_or_delete = "delete" if force_delete else "keep unused"
+    print(f"sync start: will add {len(add_objs)} files, update {len(update_objs)} files, {keep_or_delete} {len(delete_objs)} files.")
+
     for obj in add_objs:
         print(f"upload new file: {obj['key']}, size: {obj['size']}, md5: {obj['md5']}")
         s3.upload(ctx, env, obj["key"], os.path.join(sync_dir, obj["key"]), obj["md5"])
@@ -51,12 +56,13 @@ def main():
         print(f"override exist file: {obj['key']}, size: {obj['size']}, md5: {obj['md5']}")
         s3.upload(ctx, env, obj["key"], os.path.join(sync_dir, obj["key"]), obj["md5"])
     for obj in delete_objs:
-        if opt_unused == "delete":
+        if force_delete:
             print(f"remove unused file: {obj['key']}, size: {obj['size']}, md5: {obj['md5']}")
             s3.delete(ctx, env, obj["key"])
         else:
             print(f"keep unused file: {obj['key']}, size: {obj['size']}, md5: {obj['md5']}")
-    print(f"synced ok: added {len(add_objs)} files, updated {len(update_objs)} files, deleted {len(delete_objs)} files.")
+    keep_or_delete = "deleted" if force_delete else "keep unused"
+    print(f"synced ok: added {len(add_objs)} files, updated {len(update_objs)} files, {keep_or_delete} {len(delete_objs)} files.")
 
 
 if __name__ == "__main__":
