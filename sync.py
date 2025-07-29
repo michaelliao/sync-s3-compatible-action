@@ -43,7 +43,7 @@ def main():
     print(f"loaded {len(src_objs)} local files.")
     dest_objs = s3.list_all(ctx, env)
     print(f"loaded {len(dest_objs)} remote files.")
-    add_objs, update_objs, delete_objs = util.diff(src_objs, dest_objs)
+    add_objs, update_objs, delete_objs = util.diff(src_objs, dest_objs, ignore_prefix=os.environ.get(util.REMOTE_IGNORE_PREFIX, ""))
 
     force_delete = opt_unused == "delete"
     keep_or_delete = "delete" if force_delete else "keep unused"

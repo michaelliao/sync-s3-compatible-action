@@ -14,15 +14,16 @@ The action performs intelligent synchronization by comparing the local directory
 
 The `sync-s3-compatible-action` takes the following environment variables as inputs:
 
-| Name               | Default | Required | Description                                                                      |
-|--------------------|---------|----------|----------------------------------------------------------------------------------|
-| SYNC_DIR           | `_site` | No       | Source directory to synchronize.                                                 |
-| SYNC_TYPE          | `aws`   | No       | Cloud storage provider type: `aws`, `cloudflare`, `aliyun`, `qcloud`, `baidu`.   |
-| SYNC_BUCKET        |         | Yes      | Storage bucket name.                                                             |
-| SYNC_REGION        |         | Yes      | Region name or identifier.                                                       |
-| SYNC_ACCESS_ID     |         | Yes      | API access ID.                                                                   |
-| SYNC_ACCESS_SECRET |         | Yes      | API aceess secret.                                                               |
-| SYNC_OPT_UNUSED    | `keep`  | No       | How to handle files on cloud storage that don't exist locally: `keep`, `delete`. |
+| Name                 | Default | Required | Description                                                                      |
+|----------------------|---------|----------|----------------------------------------------------------------------------------|
+| SYNC_DIR             | `_site` | No       | Source directory to synchronize.                                                 |
+| SYNC_TYPE            | `aws`   | No       | Cloud storage provider type: `aws`, `cloudflare`, `aliyun`, `qcloud`, `baidu`.   |
+| SYNC_BUCKET          |         | Yes      | Storage bucket name.                                                             |
+| SYNC_REGION          |         | Yes      | Region name or identifier.                                                       |
+| SYNC_ACCESS_ID       |         | Yes      | API access ID.                                                                   |
+| SYNC_ACCESS_SECRET   |         | Yes      | API aceess secret.                                                               |
+| SYNC_OPT_UNUSED      | `keep`  | No       | How to handle files on cloud storage that don't exist locally: `keep`, `delete`. |
+| REMOTE_IGNORE_PREFIX |         | No       | Always keep remote objects which path starts with. e.g. `download/files/`.       |
 
 ## Notes
 
@@ -64,7 +65,7 @@ jobs:
         env:
           JEKYLL_ENV: production
       - name: Sync to Cloud Storage
-        uses: michaelliao/sync-s3-compatible-action@v5
+        uses: michaelliao/sync-s3-compatible-action@v6
         env:
           # force delete unused files on cloud storage:
           SYNC_OPT_UNUSED: delete
@@ -77,6 +78,8 @@ jobs:
           # set at: Settings - Secrets and variables - Actions - Repository secrets:
           SYNC_ACCESS_ID: ${{ secrets.SYNC_ACCESS_ID }}
           SYNC_ACCESS_SECRET: ${{ secrets.SYNC_ACCESS_SECRET }}
+          # ignore remote objects starts with 'download/':
+          REMOTE_IGNORE_PREFIX: download/
 ```
 
 ## Configurations

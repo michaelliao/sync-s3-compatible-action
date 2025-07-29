@@ -10,6 +10,7 @@ SYNC_REGION = "SYNC_REGION"
 SYNC_ACCESS_ID = "SYNC_ACCESS_ID"
 SYNC_ACCESS_SECRET = "SYNC_ACCESS_SECRET"
 SYNC_OPT_UNUSED = "SYNC_OPT_UNUSED"
+REMOTE_IGNORE_PREFIX = "REMOTE_IGNORE_PREFIX"
 
 
 mimetypes.add_type("text/javascript", ".js")
@@ -31,8 +32,6 @@ def guess_mime(fpath):
     'image/jpeg'
     >>> guess_mime('path/to/INDEX.WEBP')
     'image/webp'
-    >>> guess_mime('path/to/index.otf')
-    'font/otf'
     >>> guess_mime('path/to/index.woff')
     'font/woff'
     >>> guess_mime('path/to/index.woff2')
@@ -44,7 +43,7 @@ def guess_mime(fpath):
     >>> guess_mime('path/to/index.mp4')
     'video/mp4'
     >>> guess_mime('path/to/download.zip')
-    'application/zip'
+    'application/x-zip-compressed'
     >>> guess_mime('path/to/favicon.ico')
     'image/x-icon'
     >>> guess_mime('path/to/index.tgzzz')
@@ -68,14 +67,23 @@ def file_objs_to_dict(acc, obj):
     return acc
 
 
-def diff(src_objs, dest_objs):
+def diff(src_objs, dest_objs, ignore_prefix):
     """
     Create a diff by return adds, updates, deletes object list.
 
     >>> objs = walkdir('_site')
     >>> src_objs = objs[:] + [dict(key='z/update.txt', size=200, md5='UUUUUUUUUUUUUUUUUUUUUU==')]
     >>> dest_objs = objs[1:] + [dict(key='z/update.txt', size=100, md5='GOVl8c0J5IQiUlDtTe4LFM=='), dict(key='z/delete.txt', size=123, md5='ZZZZZZZZZZZZZZZZZZZZZZ==')]
-    >>> a, u, d = diff(src_objs, dest_objs)
+    >>> a, u, d = diff(src_objs, dest_objs, ignore_prefix='')
+    >>> a
+    [{'key': 'README.md', 'size': 47, 'md5': 'SPgiydU0kcyQmcQv/4ZIyA=='}]
+    >>> u
+    [{'key': 'z/update.txt', 'size': 200, 'md5': 'UUUUUUUUUUUUUUUUUUUUUU=='}]
+    >>> d
+    [{'key': 'z/delete.txt', 'size': 123, 'md5': 'ZZZZZZZZZZZZZZZZZZZZZZ=='}]
+    >>> src_objs = objs[:] + [dict(key='z/update.txt', size=200, md5='UUUUUUUUUUUUUUUUUUUUUU==')]
+    >>> dest_objs = objs[1:] + [dict(key='z/update.txt', size=100, md5='GOVl8c0J5IQiUlDtTe4LFM=='), dict(key='z/delete.txt', size=123, md5='ZZZZZZZZZZZZZZZZZZZZZZ=='), dict(key='ignore/a.txt', size=100000, md5='AAAAAAAAAAAAAAAAAAAAAA==')]
+    >>> a, u, d = diff(src_objs, dest_objs, ignore_prefix='ignore/')
     >>> a
     [{'key': 'README.md', 'size': 47, 'md5': 'SPgiydU0kcyQmcQv/4ZIyA=='}]
     >>> u
@@ -88,6 +96,8 @@ def diff(src_objs, dest_objs):
     deletes = []
     local_objs = src_objs[:]
     remote_objs = reduce(file_objs_to_dict, dest_objs, {})
+    if ignore_prefix:
+        remote_objs = {k: v for k, v in remote_objs.items() if not k.startswith(ignore_prefix)}
     for obj in local_objs:
         key = obj["key"]
         if key in remote_objs:
@@ -162,7 +172,8 @@ def walkdir(p):
     for root, _, files in os.walk(p):
         for f in files:
             fp = os.path.join(root, f)
-            objs.append({"key": fp[prefix:], "size": os.path.getsize(fp), "md5": file_b64md5(fp)})
+            key = fp[prefix:].replace("\\", "/")
+            objs.append({"key": key, "size": os.path.getsize(fp), "md5": file_b64md5(fp)})
     return sorted_objs(objs)
 
 
